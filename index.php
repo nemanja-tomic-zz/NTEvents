@@ -14,7 +14,8 @@ use NTEvents\EventArgs;
 use NTEvents\EventHandler;
 
 
-MyObserver::Main();
+$a = new MyObserver();
+$a->Main();
 
 class Observed {
 	/**
@@ -42,19 +43,25 @@ class Observed {
 
 	public function MyEventAttach(EventHandler $callback) {
 		$this->myEvent->attach($callback);
-		$this->mySecondEvent->attach($callback);
 	}
 
 	public function MyEventDetach($callback) {
 		$this->myEvent->detach($callback);
 	}
 
+	public function DumpEventHandlers() {
+		var_dump(count($this->myEvent->eventHandlers));
+	}
 
 }
 class MyObserver {
-	public static function Main() {
+
+	public function Main() {
 		$controller = new Observed();
-		$controller->MyEventAttach(new EventHandler(new MyObserver(), "OnSomething"));
+		$controller->MyEventAttach(new EventHandler($this, "OnSomething"));
+		$controller->MyEventAttach(new EventHandler($this, "OnOtherSomething"));
+		$controller->createUser();
+		$controller->MyEventDetach(new EventHandler($this, "OnSomething"));
 		$controller->createUser();
 	}
 
@@ -63,5 +70,9 @@ class MyObserver {
 		$someController = $sender;
 		var_dump($someController->someValue);
 		var_dump($eventArgs->data);
+	}
+
+	public function OnOtherSomething($sender, EventArgs $eventArgs) {
+		var_dump("PENIS".$eventArgs->data);
 	}
 }
