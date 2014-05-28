@@ -1,64 +1,22 @@
 <?php
-interface IEvent {
-	public function attach(IEventHandler $listener);
-	public function detach(IEventHandler $listener);
-	public function fire($sender, IEventArgs $eventArgs);
-}
-interface IEventHandler {
-	public function Invoke($sender, IEventArgs $eventArgs);
-}
-interface IEventArgs {
-	public function __construct($data);
-}
-class EventHandler implements IEventHandler {
+ini_set('display_startup_errors', 1);
+ini_set('display_errors', 1);
+error_reporting(-1);
 
-	private $owner;
-	private $method;
+spl_autoload_register(function($class){
+	set_include_path(get_include_path() . PATH_SEPARATOR . 'libraries/');
+	spl_autoload_extensions('.class.php,.interface.php,.library.php');
+	spl_autoload(strtolower($class));
+});
 
-	public function __construct($owner, $methodName) {
-		$this->owner = $owner;
-		$this->method = new \ReflectionMethod($owner, $methodName);
-		$this->method->setAccessible(true);
-	}
+use NTEvents\Event;
+use NTEvents\EventArgs;
+use NTEvents\EventHandler;
 
-	public function Invoke($sender, IEventArgs $eventArgs) {
-		$this->method->invoke($this->owner, $sender, $eventArgs);
-	}
 
-}
-class Event implements IEvent {
+MyObserver::Main();
 
-	private $eventHandlers;
-
-	public function __construct() {
-		$this->eventHandlers = array();
-	}
-
-	public function attach(IEventHandler $observer) {
-		$this->eventHandlers[] = $observer;
-	}
-
-	public function detach(IEventHandler $observer) {
-		//unset($this->observers[$observer]);
-	}
-
-	public function fire($sender, IEventArgs $args) {
-		/** @var $eventHandler EventHandler */
-		foreach ($this->eventHandlers as $eventHandler) {
-			$eventHandler->Invoke($sender, $args);
-		}
-	}
-}
-class EventArgs implements IEventArgs {
-	public $message;
-	public $data;
-
-	public function __construct($data) {
-		$this->data = $data;
-	}
-}
-
-class SomeController {
+class Observed {
 	/**
 	 * @var Event
 	 */
@@ -93,24 +51,17 @@ class SomeController {
 
 
 }
-
 class MyObserver {
-	public function Main() {
-		$controller = new SomeController();
-		$controller->MyEventAttach(new EventHandler($this, "OnSomething"));
+	public static function Main() {
+		$controller = new Observed();
+		$controller->MyEventAttach(new EventHandler(new MyObserver(), "OnSomething"));
 		$controller->createUser();
 	}
 
 	public function OnSomething($sender, EventArgs $eventArgs) {
-		/** @var $someController SomeController */
+		/** @var $someController Observed */
 		$someController = $sender;
 		var_dump($someController->someValue);
 		var_dump($eventArgs->data);
 	}
 }
-ini_set('display_startup_errors', 1);
-ini_set('display_errors', 1);
-error_reporting(-1);
-
-$a = new MyObserver();
-$a->Main();
