@@ -2,9 +2,6 @@
 namespace NTEvents {
 
 	class EventHandler implements IEventHandler {
-		/**
-		 * @var \ReflectionClass
-		 */
 		private $owner;
 		/**
 		 * @var \ReflectionMethod
@@ -25,12 +22,12 @@ namespace NTEvents {
 				throw new \InvalidArgumentException("Null argument passed.");
 			}
 
-			$this->owner = new \ReflectionClass($owner);
+			$this->owner = $owner;
 			$this->methodInfo = new \ReflectionMethod($owner, $methodName);
 			$this->methodInfo->setAccessible(true);
 			$this->parameters = $this->methodInfo->getParameters();
 
-			if (count($this->parameters) != 2 || $this->parameters[1]->getClass()->implementsInterface("IEventArgs")) {
+			if (count($this->parameters) != 2 || !$this->parameters[1]->getClass()->implementsInterface("NTEvents\\IEventArgs")) {
 				throw new \InvalidArgumentException("Provided method cannot be resolved as event handler. Please provide method with 2 arguments, with one argument of IEventArgs type.");
 			}
 

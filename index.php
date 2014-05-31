@@ -1,7 +1,4 @@
 <?php
-
-
-
 //////////////////////////////////////////////////////////////////////////
 ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
@@ -16,7 +13,6 @@ spl_autoload_register(function($class){
 use NTEvents\Event;
 use NTEvents\EventArgs;
 use NTEvents\EventHandler;
-
 
 $a = new MyObserver();
 $a->Main();
