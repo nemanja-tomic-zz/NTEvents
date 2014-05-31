@@ -3,7 +3,7 @@ namespace NTEvents {
 	class Event implements IEvent {
 
 		/**
-		 * @var array[IEventHandler]
+		 * @var IEventHandler[]
 		 */
 		public $eventHandlers;
 
@@ -22,7 +22,6 @@ namespace NTEvents {
 		}
 
 		public function fire($sender, IEventArgs $args) {
-			/** @var $eventHandler EventHandler */
 			foreach ($this->eventHandlers as $eventHandler) {
 				$eventHandler->invoke($sender, $args);
 			}
