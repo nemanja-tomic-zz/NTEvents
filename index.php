@@ -3,16 +3,10 @@ ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
 error_reporting(-1);
 
-spl_autoload_register(function($class){
-	set_include_path(get_include_path() . PATH_SEPARATOR . 'libraries/');
-	spl_autoload_extensions('.class.php,.interface.php,.library.php');
-	spl_autoload(strtolower($class));
-});
-
+require_once "libraries/ntevents_init.php";
 use NTEvents\Event;
 use NTEvents\EventArgs;
 use NTEvents\EventHandler;
-
 
 $a = new MyObserver();
 $a->Main();
