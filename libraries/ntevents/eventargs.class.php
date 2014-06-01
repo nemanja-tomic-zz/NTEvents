@@ -7,5 +7,9 @@ namespace NTEvents {
 		public function __construct($data) {
 			$this->data = $data;
 		}
+
+		public static function NoArgs() {
+			return new EventArgs("");
+		}
 	}
 }

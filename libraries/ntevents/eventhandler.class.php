@@ -1,23 +1,40 @@
 <?php
 namespace NTEvents {
+
 	class EventHandler implements IEventHandler {
-
 		private $owner;
-		private $method;
+		/**
+		 * @var \ReflectionMethod
+		 */
+		private $methodInfo;
+		/**
+		 * @var \ReflectionParameter[]
+		 */
+		private $parameters;
 
+		/**
+		 * @param $owner object Owned of the method (The class containing method definition).
+		 * @param $methodName string Must be a method which accepts two arguments of following types: (object, IEventArgs).
+		 * @throws \InvalidArgumentException
+		 */
 		public function __construct($owner, $methodName) {
-			$this->owner = $owner;
-			$this->method = new \ReflectionMethod($owner, $methodName);
-
-			$params = $this->method->getParameters();
-			if (count($params) != 2 || $params[1]->getClass()->name != get_class(new EventArgs(""))) {
-				throw new \InvalidArgumentException("Provided method must have exactly two arguments and the second argument must be of EventArgs type.");
+			if ($owner == null || $methodName == null) {
+				throw new \InvalidArgumentException("Null argument passed.");
 			}
-			$this->method->setAccessible(true);
+
+			$this->owner = $owner;
+			$this->methodInfo = new \ReflectionMethod($owner, $methodName);
+			$this->methodInfo->setAccessible(true);
+			$this->parameters = $this->methodInfo->getParameters();
+
+			if (count($this->parameters) != 2 || !$this->parameters[1]->getClass()->implementsInterface("NTEvents\\IEventArgs")) {
+				throw new \InvalidArgumentException("Provided method cannot be resolved as event handler. Please provide method with 2 arguments, with one argument of IEventArgs type.");
+			}
+
 		}
 
 		public function invoke($sender, IEventArgs $eventArgs) {
-			$this->method->invoke($this->owner, $sender, $eventArgs);
+			$this->methodInfo->invoke($this->owner, $sender, $eventArgs);
 		}
 
 	}
