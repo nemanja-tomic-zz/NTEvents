@@ -1,0 +1,12 @@
+{
+  "name": "nemanja-tomic/package_name",
+  "description": "description_text",
+  "minimum-stability": "dev",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Nemanja Tomic",
+      "email": "nemus87@gmail.com"
+    }
+  ]
+}
