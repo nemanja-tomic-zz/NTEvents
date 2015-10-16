@@ -1,6 +1,6 @@
 {
-  "name": "nemanja-tomic/package_name",
-  "description": "description_text",
+  "name": "nemanja-tomic/nt-events",
+  "description": "Lightweight event framework for PHP",
   "minimum-stability": "dev",
   "license": "MIT",
   "authors": [
